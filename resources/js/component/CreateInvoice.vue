@@ -113,15 +113,15 @@
                                 <table width="100%" >
                                     <tr>
                                         <th>Subtotal</th>
-                                        <th>TK{{totalAmount.toLocaleString("en-US")}}</th>
+                                        <th>TK{{subtotalAmount.toLocaleString("en-US")}}</th>
                                     </tr>
                                     <tr class="">
                                         <td @click="visible = true" class="invoice-tax-td">{{ taxs.firstTaxName }} {{taxs.firstTaxRate}} % (incl.)</td>
-                                        <td>Lt0.00</td>
+                                        <td>Lt {{firstTaxAmount.toLocaleString("en-US")}} </td>
                                     </tr>
                                     <tr class="">
                                         <td @click="visible = true" class="invoice-tax-td">{{ taxs.secondTaxName }} {{taxs.secondTaxRate}}% (incl.)</td>
-                                        <td>Lt0.00</td>
+                                        <td>Lt{{ secondTaxAmount.toLocaleString("en-US") }}</td>
                                     </tr>
                                     <tr class="table-data-subtotal">
                                         <td>Total</td>
@@ -295,6 +295,7 @@ const getTax = (tax) => {
     taxs.firstTaxRate = tax.firstTaxRate;
     taxs.secondTaxName = tax.secondTaxCode;
     taxs.secondTaxRate = tax.secondTaxRate;
+    visible.value = false;
 }
 
 /////////////////////////// tax part end /////////////////////////////////
@@ -320,15 +321,28 @@ const deleteItem = (index) => {
     selectedServiceArray.value.splice(index, 1);
 }
 
-const totalAmount = computed(()=>{
+const subtotalAmount = computed(()=>{
     return selectedServiceArray.value.reduce((sum,item)=>{
         createInvoiceData.subtotal = sum + (item.totalAmount || 0)
         return sum + (item.totalAmount || 0)
     },0)
+
+
 })
 
 
+const firstTaxAmount = computed(()=>{
+    return (subtotalAmount.value * taxs.firstTaxRate) / 100 ;
+})
 
+const secondTaxAmount = computed(()=>{
+    return (subtotalAmount.value * taxs.secondTaxRate) / 100 ;
+})
+
+
+const totalAmount = computed(()=>{
+    return (subtotalAmount.value + firstTaxAmount.value + secondTaxAmount.value)
+})
 
 const fetchAllService = async() => {
     let response = await axios.get('http://127.0.0.1:8000/api/service');
