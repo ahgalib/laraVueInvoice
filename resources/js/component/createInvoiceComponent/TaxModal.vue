@@ -34,7 +34,6 @@
             <label for="invoiceNumber">Second Tax Code</label>
         </span>
         <span class="p-float-label">
-            <input type="number" min=0 max=100>
             <InputNumber v-model="taxs.secondTaxRate" inputId="percent" prefix="%" :min="0" :max="100"/>
             <label for="percent" class="font-bold block mb-2"> Second Tax Rate </label>
         </span>

@@ -10,21 +10,21 @@
     <Toast />
     <div class="create-wrapper">
         <div class="create-sectin">
-            <!-- <UserComponent :store = 'createInvoiceStore'/> -->
             <Card>
                 <template #content>
                     <div class="create-invoice-card">
                         <div class="user-info" v-if="showSelectbox == false">
                             <div class="edit-with-name">
-                                <h3>{{ createInvoiceData.user.name }}</h3>
+                                <h3>{{ invoiceUser.user.name }}</h3>
                                 <button class="name-edit">edit</button>
                             </div>
-                            <p style="margin-top:-8px;">{{createInvoiceData.user.email}}</p>
+                            <p style="margin-top:-8px;">{{invoiceUser.user.email}}</p>
                         </div>
 
                         <div class="select-user" v-if="showSelectbox">
-                            <Dropdown v-model="createInvoiceData.user" :options="users" optionLabel="name" placeholder="Select User" class="w-full md:w-18rem select-dropdown" @change="changeUser"/>
+                            <Dropdown v-model="invoiceUser.user" :options="users" optionLabel="name" placeholder="Select User" class="w-full md:w-18rem select-dropdown" @change="changeUser(invoiceUser.user.id)"/>
                         </div>
+
 
                         <div class="invoice-form">
                             <span class="p-float-label">
@@ -84,6 +84,7 @@
                                                 </td>
 
                                                 <td><input type="text" v-model="item.price" class="input-box" @keyup="updateTotalAmount(item)"></td>
+
                                                 <td>{{ item.totalAmount.toLocaleString("en-US") }} TK</td>
                                             </tr>
                                             <tr>
@@ -91,7 +92,7 @@
 
                                                     <input type="text" class="item-description" placeholder="Item description">
                                                 </td>
-                                                <td class="tax-td">
+                                                <td class="tax-td" @click="discountPopUp">
                                                     Tax & Discount
                                                 </td>
                                             </tr>
@@ -117,11 +118,11 @@
                                     </tr>
                                     <tr class="">
                                         <td @click="visible = true" class="invoice-tax-td">{{ taxs.firstTaxName }} {{taxs.firstTaxRate}} % (incl.)</td>
-                                        <td>Lt {{firstTaxAmount.toLocaleString("en-US")}} </td>
+                                        <td>TK{{firstTaxAmount.toLocaleString("en-US")}} </td>
                                     </tr>
                                     <tr class="">
                                         <td @click="visible = true" class="invoice-tax-td">{{ taxs.secondTaxName }} {{taxs.secondTaxRate}}% (incl.)</td>
-                                        <td>Lt{{ secondTaxAmount.toLocaleString("en-US") }}</td>
+                                        <td>TK{{ secondTaxAmount.toLocaleString("en-US") }}</td>
                                     </tr>
                                     <tr class="table-data-subtotal">
                                         <td>Total</td>
@@ -129,7 +130,7 @@
                                     </tr>
                                     <Divider />
                                     <tr class="table-data-amount">
-                                        <td>Amount due</td>
+                                        <td>Amount due </td>
                                         <td>TK{{totalAmount.toLocaleString("en-US")}}</td>
                                     </tr>
                                 </table>
@@ -162,21 +163,17 @@
         </div>
          <!----------- tax modal end ----------------->
 
-
-
-
-
-
     </div>
 </template>
 
 <script setup>
 
-import { ref, reactive, onMounted, watchEffect, watch, computed } from "vue";
+import { ref, reactive, onMounted, toRefs, watch, computed } from "vue";
 import Card from 'primevue/card';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
+
 import { useToast } from 'primevue/usetoast';
 import Divider from 'primevue/divider';
 import Calendar from 'primevue/calendar';
@@ -196,21 +193,12 @@ const toast = useToast();
 const selectedUser = ref();
 const today = new Date();
 
+
 const showSelectbox = ref(true);
 // Calculate the due date (current date + 7 days)
 const dueDate = new Date(today);
 dueDate.setDate(today.getDate() + 7);
 
-const createInvoiceData = reactive({
-     user : '',
-     invoiceNumber : '',
-     purchase : '',
-     date : today,
-     dueDate : dueDate,
-     subtotal : '',
-     total : '',
-
-});
 
 const createItemData = reactive({
     service_title : '',
@@ -220,22 +208,12 @@ const createItemData = reactive({
     note : '',
 })
 
-const changeUser = () => {
-    showSelectbox.value = false
+const changeUser = (id) => {
+    showSelectbox.value = false;
+    createInvoiceData.user = id;
+
+
 }
-
-
-watch(
-    [() => createInvoiceData.dueDate, () => createInvoiceData.date],
-    ([newDueDate, currentDate], [oldDueDate, oldDate]) => {
-        if (newDueDate < currentDate) {
-        // Update the dueDate property in createInvoiceData
-        createInvoiceData.dueDate = new Date(currentDate);
-
-        }
-    }
-);
-
 
 
 function dynamicText(message){
@@ -243,23 +221,6 @@ function dynamicText(message){
 }
 
 
-const submitCreateInvoiceForm = () => {
-
-    if(createInvoiceData.user == ''){
-        dynamicText('There should be a customer');
-    }else if(createInvoiceData.invoiceNumber == ''){
-        dynamicText('Invoice Number is required');
-    }else if(createInvoiceData.dueDate < createInvoiceData.date){
-        createInvoiceData.date = createInvoiceData.dueDate;
-    }else if(selectedServiceArray.value.length <= 0){
-        dynamicText('Please select a item');
-    }else{
-        // createInvoiceItems()
-
-        console.log(createInvoiceData)
-    }
-
-}
 
 const createInvoiceItems = () => {
     selectedServiceArray.value.forEach((item, index) => {
@@ -269,13 +230,14 @@ const createInvoiceItems = () => {
         createItemData.total_price = item.totalAmount;
         createItemData.note = ''; // Update this if needed
 
-        // console.log(`Item ${index + 1}:`, createItemData);
+        console.log(`Item ${index + 1}:`, createItemData);
 
-        console.log('this is service array item man ',selectedServiceArray.value);
+        //console.log('this is service array item man ',selectedServiceArray.value);
     });
 }
 
 const users = ref([])
+
 const fetchAllUser = async() => {
     let response = await axios.get('http://127.0.0.1:8000/api/user');
     users.value = response.data.data
@@ -300,19 +262,6 @@ const getTax = (tax) => {
 
 /////////////////////////// tax part end /////////////////////////////////
 
-
-// service section js start
-const getSelectedItemName = () => {
-    if (selectedService.value) {
-        const selectedItem = {
-            ...selectedService.value,
-            quantity: 1,
-            totalAmount: selectedService.value.price
-        };
-        selectedServiceArray.value.push(selectedItem);
-    }
-};
-
 const updateTotalAmount = (item) => {
     item.totalAmount = item.quantity * item.price;
 }
@@ -320,6 +269,7 @@ const updateTotalAmount = (item) => {
 const deleteItem = (index) => {
     selectedServiceArray.value.splice(index, 1);
 }
+
 
 const subtotalAmount = computed(()=>{
     return selectedServiceArray.value.reduce((sum,item)=>{
@@ -343,6 +293,112 @@ const secondTaxAmount = computed(()=>{
 const totalAmount = computed(()=>{
     return (subtotalAmount.value + firstTaxAmount.value + secondTaxAmount.value)
 })
+
+
+// ---------- submit invoice data ------------------------------
+const invoiceUser = ref({
+    user:'',
+});
+
+
+
+
+const createInvoiceData = reactive({
+    user: '',
+    invoiceNumber : '',
+    purchase : '',
+    date : today,
+    dueDate : dueDate,
+    subtotal : '',
+    total : totalAmount,
+    firstTaxName: taxs.firstTaxName,
+    firstTaxRate : taxs.firstTaxRate,
+    firstTaxAmount : firstTaxAmount,
+    secondTaxName : taxs.secondTaxName,
+    secondTaxRate : taxs.secondTaxRate,
+    secondTaxAmount : secondTaxAmount,
+
+
+});
+
+
+
+watch(
+    [() => createInvoiceData.dueDate, () => createInvoiceData.date],
+    ([newDueDate, currentDate], [oldDueDate, oldDate]) => {
+        if (newDueDate < currentDate) {
+        // Update the dueDate property in createInvoiceData
+        createInvoiceData.dueDate = new Date(currentDate);
+
+        }
+    }
+);
+
+const submitCreateInvoiceForm = async() => {
+
+    if(invoiceUser.user == ''){
+        dynamicText('There should be a customer');
+    }else if(createInvoiceData.invoiceNumber == ''){
+        dynamicText('Invoice Number is required');
+    }else if(createInvoiceData.dueDate < createInvoiceData.date){
+        createInvoiceData.date = createInvoiceData.dueDate;
+    }else if(selectedServiceArray.value.length <= 0){
+        dynamicText('Please select a item');
+    }else{
+        
+
+        let createData = await axios.post('http://127.0.0.1:8000/api/store-invoice',{
+            'invoice_no'            : createInvoiceData.invoiceNumber,
+            'user_id'               : createInvoiceData.user,
+            'purchase_order'        : createInvoiceData.purchase,
+            'issue_date'            : createInvoiceData.date.toISOString().substr(0, 10),
+            'due_date'              : createInvoiceData.dueDate.toISOString().substr(0, 10),
+
+            'subtotal'              : createInvoiceData.subtotal,
+            'total'                 : createInvoiceData.total,
+            'paid_amount'           : 0,
+            'due_amount'            : createInvoiceData.total,
+
+            'tax_title'             : createInvoiceData.firstTaxName,
+            'tax_percentage'        : createInvoiceData.firstTaxRate,
+            'tax_amount'            : createInvoiceData.firstTaxAmount,
+            'second_tax_title'      : createInvoiceData.secondTaxName,
+            'second_tax_percentage' : createInvoiceData.secondTaxRate,
+            'second_tax_amount'     : createInvoiceData.secondTaxAmount,
+        });
+
+        let createItemData = await axios.post('http://127.0.0.1:8000/api/store-invoice-items-0987',{
+            invoiceItems: selectedServiceArray.value,
+        });
+
+
+        if(createData.data.message === 'success'){
+            toast.add({ severity: 'success', detail: 'Invoice HasBeen Created Successfully', life: 3000 });
+
+            selectedServiceArray.value = [];
+        }
+
+
+    }
+}
+
+
+
+// -----------------submit invoice data end
+
+// service section js start
+const getSelectedItemName = () => {
+    if (selectedService.value) {
+        const selectedItem = {
+            ...selectedService.value,
+            quantity: 1,
+            totalAmount: selectedService.value.price
+        };
+        selectedServiceArray.value.push(selectedItem);
+    }
+};
+
+
 
 const fetchAllService = async() => {
     let response = await axios.get('http://127.0.0.1:8000/api/service');
@@ -476,6 +532,12 @@ onMounted(async()=>{
     padding:5px 0px;
     text-align: center;
 
+}
+
+.discount{
+    width:100px;
+    padding:5px 0px;
+    text-align: center;
 }
 
 .table-bottom-div{
