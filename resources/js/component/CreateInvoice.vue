@@ -1,7 +1,7 @@
 <template>
     <div class="top-section">
         <div>
-            <p><router-link class="breadcrumb" to="/">Document / </router-link> <router-link class="breadcrumb" to="/invoice"> Invoice </router-link> / create</p>
+            <p><router-link class="breadcrumb" to="/">Document / </router-link> <router-link class="breadcrumb" to="/invoices-list"> Invoice </router-link> / create</p>
         </div>
         <div>
             <Button label="Save" severity="info" @click="submitCreateInvoiceForm()"/>
@@ -345,7 +345,7 @@ const submitCreateInvoiceForm = async() => {
     }else if(selectedServiceArray.value.length <= 0){
         dynamicText('Please select a item');
     }else{
-        
+
 
         let createData = await axios.post('http://127.0.0.1:8000/api/store-invoice',{
             'invoice_no'            : createInvoiceData.invoiceNumber,
