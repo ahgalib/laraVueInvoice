@@ -171,56 +171,8 @@ const setChartOptions = () => {
 
 
 <style>
-.side-bar{
-    width : 20%;
-
-}
-.sidebar-ul{
-    margin-left:-40px;
-}
-.sidebar-ul li{
-    list-style: none;
-
-    font-size:16px;
-
-    padding: 10px 10px;
-}
-
-.sidebar-ul li i{
-    margin-right:20px;
-    font-weight:bold;
-    font-size:18px;
-}
-
-.sidebar-ul li:hover{
-    background-color:#efeded;
-    font-weight:bold;
 
 
-}
-
-.fa-dollar-sign {
-    color:rgb(11, 176, 213);
-
-}
-
-.side-bar-bulp{
-    color:rgb(38, 110, 254);
-}
-
-.nav-section{
-    display:flex;
-    justify-content: space-between;
-}
-
-.pi-bars{
-    font-size:20px;
-    margin-right: 30px;
-}
-
-.nav-section h2{
-    font-size:30px;
-}
 
 .first-card{
     display: flex;

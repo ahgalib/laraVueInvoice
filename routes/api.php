@@ -23,5 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/user',[UserController::class,'user_list']);
 Route::get('/service',[ServiceController::class,'service_list']);
+Route::get('/invoice-list',[InvoiceController::class,'invoiceList']);
 Route::post('/store-invoice', [InvoiceController::class, 'storeInvoice']);
 Route::post('/store-invoice-items-0987', [InvoiceController::class, 'storeInvoiceItem']);

@@ -14,7 +14,7 @@
 
     </head>
     <body style="background-color:rgb(245, 248, 250)">
-        <div id="app" style="margin:0px 40px;"> </div>
+        <div id="app" style="margin-right: 40px;"> </div>
 
         @vite('resources/js/app.js')
 

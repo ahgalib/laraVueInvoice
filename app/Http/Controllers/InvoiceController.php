@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 class InvoiceController extends Controller
 {
 
+    public function invoiceList(){
+        $invoices = Invoice::with('user')->orderBy('id', 'desc')->get();
+
+        return $invoices;
+    }
+
     public function storeInvoice(Request $request){
 
         $data = [

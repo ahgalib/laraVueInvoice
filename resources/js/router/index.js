@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from '../component/Home.vue'
-import Invoice from '../component/Invoice.vue'
-import CreateInvoice from '../component/CreateInvoice.vue'
+
+import CreateInvoice from '../component/CreateInvoice.vue';
+import InvoiceList from '../component/InvoiceList.vue';
+import SingleInvoice from '../component/singleInvoice/MainInvoice.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -11,16 +13,24 @@ const router = createRouter({
             name:'home',
             component : Home
         },
-        {
-            path:'/invoice',
-            name:'invoice',
-            component : Invoice
-        },
+
         {
             path:'/create-invoice',
-            name:'create-nvoice',
+            name:'create-invoice',
             component : CreateInvoice
-        }
+        },
+        {
+            path: '/invoices-list',
+            name: 'invoices-list',
+            component : InvoiceList
+
+        },
+        {
+            path: '/single-invoice/:uid',
+            name: 'single-invoice',
+            component : SingleInvoice
+
+        },
     ]
 })
 
