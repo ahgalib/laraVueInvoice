@@ -11,21 +11,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="invoice-tr">
-                <td>Shuvro Geche Bone sdfsdf sdf sd</td>
-                <td class="quan-td">5</td>
-                <td class="price-td"> 56495 TK. </td>
+            <tr class="invoice-tr" v-for="invoiceItem in invoiceData.invoice_items" :key="invoiceItem.id">
+                <td>{{ invoiceItem.service_title }}</td>
+                <td class="quan-td">{{ invoiceItem.quantity }}</td>
+                <td class="price-td"> {{ invoiceItem.price ? invoiceItem.price.toLocaleString("en-US") : ''  }} TK. </td>
 
-                <td class="total-info">TK.54344</td>
+                <td class="total-info">{{ invoiceItem.total_price ? invoiceItem.total_price.toLocaleString("en-US") : ''  }} TK.</td>
             </tr>
-            <tr class="invoice-tr">
-                <td>Book</td>
-                <td class="quan-td">5</td>
-                <td class="price-td"> 56d45  TK.</td>
-
-                <td class="total-info">TK.54354</td>
-            </tr>
-
             </tbody>
         </table>
         <Divider/>
@@ -34,14 +26,14 @@
             <div class="heading-price">
                 <div class="subtotal-div">
                     <p>subTatal</p>
-                    <p>TAX included(70%)</p>
-                    <p>visiting tax included(60%)</p>
+                    <p>{{ invoiceData.tax_title }} ({{invoiceData.tax_percentage}}%)</p>
+                    <p>{{ invoiceData.second_tax_title }} ({{invoiceData.second_tax_percentage}}%)</p>
 
                 </div>
                 <div class="price-div">
-                    <p>4564895 TK.</p>
-                    <p>5564895 TK.</p>
-                    <p class="visit-tax-amount">9564895 TK.</p>
+                    <p>{{ invoiceData.subtotal ? invoiceData.subtotal.toLocaleString("en-US") : ''  }} TK.</p>
+                    <p>{{ invoiceData.tax_amount ?  invoiceData.tax_amount.toLocaleString("en-US") : '' }} TK.</p>
+                    <p class="visit-tax-amount">{{ invoiceData.second_tax_amount ?invoiceData.second_tax_amount.toLocaleString("en-US") : '' }} TK.</p>
 
                 </div>
             </div>
@@ -50,21 +42,21 @@
 
             <div class="heading-price">
                 <div class="subtotal-div">
-                    <p>Tatal</p>
+                    <p>Total</p>
                 </div>
                 <div class="price-div">
-                    <p>4564895 TK.</p>
+                    <p>{{ totalAmount ? totalAmount.toLocaleString("en-US") : '' }} TK.</p>
                 </div>
             </div>
 
             <div class="divider"></div>
 
-            <div class="heading-price">
+            <div class="heading-price" v-for="item in transactionData" :key="item.id">
                 <div class="subtotal-div">
-                    <p>Paid on 20 Dec 2023</p>
+                    <p>Paid on {{ item.paid_date }}</p>
                 </div>
                 <div class="price-div">
-                    <p>4564895 TK.</p>
+                    <p>{{ item.paid_amount ? item.paid_amount.toLocaleString("en-US") : ''  }} TK.</p>
                 </div>
             </div>
 
@@ -75,13 +67,18 @@
                     <p>Amount Due</p>
                 </div>
                 <div class="price-div">
-                    <p>764895 TK.</p>
+                    <p>{{ dueAmount ? dueAmount.toLocaleString("en-US") : '0' }} TK.</p>
                 </div>
             </div>
 
-            <div class="bottom-main-amount">
-                <p>Deposit due | 21 Dec 2023</p>
-                <p class="main-amount-show">45643 TK.</p>
+            <div class="bottom-main-amount" v-if="isInvoiceExist">
+                <p>Deposit due | {{ depositDuDate }}</p>
+                <p class="main-amount-show">{{ depositAmount ? depositAmount.toLocaleString("en-US") : '0'  }} TK.</p>
+            </div>
+
+            <div class="bottom-main-amount" v-if="!isInvoiceExist">
+                <p>Amount due | {{ dueDate }}</p>
+                <p class="main-amount-show">{{ dueAmount ? dueAmount.toLocaleString("en-US") : '0' }} TK.</p>
             </div>
 
         </div>
@@ -93,6 +90,17 @@
 
 <script setup>
 import Divider from 'primevue/divider';
+
+import {useInvoiceStore} from '../../store/Invoice';
+import { storeToRefs } from "pinia";
+
+const store = useInvoiceStore();
+const {transactionData, dueAmount, totalPaidAmount, totalAmount, isInvoiceExist, depositAmount, depositDuDate, dueDate} = storeToRefs(store);
+
+
+const props = defineProps({
+    invoiceData: Object,
+})
 </script>
 
 <style  scoped>

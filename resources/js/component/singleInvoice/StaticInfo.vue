@@ -10,15 +10,16 @@
                 <p>Gulshan-3</p>
                 <p>Dhaka</p>
                 <p>Bangladesh</p>
+                <h2>{{ routeId }}</h2>
             </div>
         </div>
 
         <div class="billar-info">
             <div class="customer-info">
                 <p>BILL TO</p>
-                <p>Galib</p>
+                <p>{{ userData.name }}</p>
                 <p>Tax Reg No. : 3534535</p>
-                <p>asadullahalgalib783@gmail.com</p>
+                <p>{{ userData.email }}</p>
             </div>
             <div class="invoice-info">
                 <div class="th-name">
@@ -27,9 +28,10 @@
                     <p>Due date</p>
                 </div>
                 <div class="td-name">
-                    <p>Invoice-12</p>
-                    <p>16 Oct 2023</p>
-                    <p>23 Oct 2023</p>
+                    <p>#-{{ invoiceData.invoice_no }} </p>
+                    <p>{{ invoiceData.issue_date }}</p>
+                    <p>{{ invoiceData.due_date }}</p>
+
                 </div>
             </div>
         </div>
@@ -38,7 +40,14 @@
 </template>
 
 <script setup>
+import {useInvoiceStore} from '../../store/Invoice'
+import {onMounted, ref, reactive} from 'vue';
 
+
+const props = defineProps({
+    userData : Object,
+    invoiceData : Object
+})
 </script>
 
 <style  scoped>

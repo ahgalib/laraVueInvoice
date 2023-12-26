@@ -1,5 +1,4 @@
 <template>
-
     <div class="">
         <Dropdown v-model="selectedCity" :options="cities" optionLabel="" placeholder="Filter by customer" class="w-full custom-margin" :style="{ width: '20rem' }" />
 
@@ -160,11 +159,11 @@ table {
     margin-right:8px;
    }
 
-   .invoice-no{
-    font-size:14px;
-    text-decoration: none;
+    .invoice-no{
+        font-size:14px;
+        text-decoration: none;
         color:black;
-   }
+    }
     .invoice-user{
         font-weight: bold;
         text-decoration: none;
