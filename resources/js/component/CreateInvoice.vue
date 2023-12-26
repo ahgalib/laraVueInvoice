@@ -117,12 +117,12 @@
                                         <th>TK{{subtotalAmount.toLocaleString("en-US")}}</th>
                                     </tr>
                                     <tr class="">
-                                        <td @click="visible = true" class="invoice-tax-td">{{ taxs.firstTaxName }} {{taxs.firstTaxRate}} % (incl.)</td>
-                                        <td>TK{{firstTaxAmount.toLocaleString("en-US")}} </td>
+                                        <td @click="visible = true" class="invoice-tax-td">{{ taxs.firstTaxName }} {{taxs.firstTaxRate}} %</td>
+                                        <td class="tax-amount">TK{{firstTaxAmount.toLocaleString("en-US")}} </td>
                                     </tr>
                                     <tr class="">
-                                        <td @click="visible = true" class="invoice-tax-td">{{ taxs.secondTaxName }} {{taxs.secondTaxRate}}% (incl.)</td>
-                                        <td>TK{{ secondTaxAmount.toLocaleString("en-US") }}</td>
+                                        <td @click="visible = true" class="invoice-tax-td">{{ taxs.secondTaxName }} {{taxs.secondTaxRate}}%</td>
+                                        <td class="tax-amount">TK{{ secondTaxAmount.toLocaleString("en-US") }}</td>
                                     </tr>
                                     <tr class="table-data-subtotal">
                                         <td>Total</td>
@@ -181,9 +181,10 @@ import axios from 'axios';
 import Tax from './createInvoiceComponent/TaxModal.vue'
 
 import Dialog from 'primevue/dialog';
+import { useRouter  } from 'vue-router';
 
 const visible = ref(false);
-
+const router = useRouter();
 
 const selectedService = ref('');
 const selectedServiceArray = ref([]);
@@ -376,6 +377,8 @@ const submitCreateInvoiceForm = async() => {
             toast.add({ severity: 'success', detail: 'Invoice HasBeen Created Successfully', life: 3000 });
 
             selectedServiceArray.value = [];
+
+            router.push({name:'single-invoice',params:{uid:createData.data.uid}})
         }
 
 
@@ -538,6 +541,12 @@ onMounted(async()=>{
     width:100px;
     padding:5px 0px;
     text-align: center;
+}
+
+.tax-amount{
+
+    text-align:center;
+
 }
 
 .table-bottom-div{
